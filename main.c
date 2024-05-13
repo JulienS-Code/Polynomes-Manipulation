@@ -11,7 +11,10 @@ typedef struct rationnel Rationnel;
 
 /* Fonction qui attribue en backend la valeur 1 au dénominateur si l'utilisateur ne l'a pas renseigné */
 void DefaultValueRationnel(Rationnel *r) {
-    if (r->den == 0) r->den = 1;
+    if (r->den == 0)  {
+        r->den = 1;
+        printf("Vous avez rentré un dénominateur null, il a été modifié par la valeur 1.\n");
+    }
 }
 
 /* Plus grand diviseur commun de deux entiers */
@@ -34,7 +37,11 @@ void SimplifyRationnel(Rationnel *r) {
 /* Lecture d'un rationnel depuis la console de l'utilisateur */
 void LectureRationnel(Rationnel *r) {
     printf("Entrez un rationnel (num/den): ");
-    scanf("%d/%d", &r->num, &r->den);
+    int result = scanf("%d/%d", &r->num, &r->den);
+    if (result != 2 && result != 1) {
+        printf("Erreur ! Vous devez obligatoirement rentrez des entiers.\n");
+        exit(1);
+    }    
     DefaultValueRationnel(r);
     if (r->den < 0) { // si dénominateur négatif, permute le signe sur numérateur
         r->num = -r->num;
@@ -117,9 +124,14 @@ typedef struct polynome Polynome;
 void LecturePoly(Polynome *p) {
     printf("Lecture d'un polynome.\n");
     printf("Degré du polynome : ");
-    scanf("%d", &p->degre);
+    int result = scanf("%d", &p->degre);
+    if (result != 1) {
+        printf("Vous devez obligatoirement rentrez un entier.\n");
+        exit(1);
+    }
     p->poly = (Rationnel*)malloc((p->degre + 1) * sizeof(Rationnel)); // Allocation mémoire du tableau
     for (int i = p->degre; i >= 0; i--) {
+        printf("Degré x^%d : ", i);
         LectureRationnel(&p->poly[i]); // création d'un rationnel par degré du polynôme
     } // le polynôme est modifié depuis ses pointeurs, aucun return
 }
@@ -400,7 +412,7 @@ void main() {
                 && input != 'E' && input != 'D' 
                 && input != 'T');
 
-        printf("Voullez-vous continuer ? (o/n) : \n");
+        printf("Voulez-vous continuer ? (o/n) : \n");
         scanf(" %c", &continu);
 
     } while (continu == 'o');
